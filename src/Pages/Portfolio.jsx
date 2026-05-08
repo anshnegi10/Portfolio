@@ -1,0 +1,495 @@
+import React, { useEffect, useState, useCallback } from "react";
+import PropTypes from "prop-types";
+import SwipeableViews from "react-swipeable-views";
+import { useTheme } from "@mui/material/styles";
+import AppBar from "@mui/material/AppBar";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
+import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
+import CardProject from "../components/CardProject";
+import AOS from "aos";
+import "aos/dist/aos.css";
+import Certificate from "../components/Certificate";
+import CredlyBadge from "../components/CredlyBadge";
+import { 
+  Code, 
+  Award, 
+  Boxes, 
+  Cloud, 
+  Database, 
+  Terminal, 
+  Layers, 
+  Server, 
+  Cpu, 
+  Globe, 
+  ShieldCheck, 
+  Settings,
+  Layout,
+  Search,
+  GitBranch,
+  Monitor,
+  Lock,
+  Cpu as VmIcon
+} from "lucide-react";
+
+const ToggleButton = ({ onClick, isShowingMore }) => (
+  <button
+    onClick={onClick}
+    className="
+      px-3 py-1.5
+      text-slate-300 
+      hover:text-white 
+      text-sm 
+      font-medium 
+      transition-all 
+      duration-300 
+      ease-in-out
+      flex 
+      items-center 
+      gap-2
+      bg-white/5 
+      hover:bg-white/10
+      rounded-md
+      border 
+      border-white/10
+      hover:border-white/20
+      backdrop-blur-sm
+      group
+      relative
+      overflow-hidden
+    "
+  >
+    <span className="relative z-10 flex items-center gap-2">
+      {isShowingMore ? "See Less" : "See More"}
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className={`
+          transition-transform 
+          duration-300 
+          ${isShowingMore ? "group-hover:-translate-y-0.5" : "group-hover:translate-y-0.5"}
+        `}
+      >
+        <polyline points={isShowingMore ? "18 15 12 9 6 15" : "6 9 12 15 18 9"}></polyline>
+      </svg>
+    </span>
+    <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-purple-500/50 transition-all duration-300 group-hover:w-full"></span>
+  </button>
+);
+
+function TabPanel({ children, value, index, ...other }) {
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`full-width-tabpanel-${index}`}
+      aria-labelledby={`full-width-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box sx={{ p: { xs: 1, sm: 3 } }}>
+          <Typography component="div">{children}</Typography>
+        </Box>
+      )}
+    </div>
+  );
+}
+
+TabPanel.propTypes = {
+  children: PropTypes.node,
+  index: PropTypes.number.isRequired,
+  value: PropTypes.number.isRequired,
+};
+
+function a11yProps(index) {
+  return {
+    id: `full-width-tab-${index}`,
+    "aria-controls": `full-width-tabpanel-${index}`,
+  };
+}
+
+export const projectsData = [
+  {
+    id: 1,
+    Title: "Summarize quickly",
+    Description: "An AI-powered tool to summarize long texts quickly.",
+    Link: "https://github.com/anshnegi10/Summarize-quickly",
+    Img: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1470&auto=format&fit=crop",
+    TechStack: ["Python", "Machine Learning", "NLP"]
+  },
+  {
+    id: 2,
+    Title: "Website Frontend",
+    Description: "Frontend templates and designs for modern web applications.",
+    Link: "https://github.com/anshnegi10/Website-Frontend-",
+    Img: "https://images.unsplash.com/photo-1547658719-da2b51169166?q=80&w=1528&auto=format&fit=crop",
+    TechStack: ["React", "CSS", "HTML"]
+  },
+  {
+    id: 3,
+    Title: "File Encryptor Swing",
+    Description: "A Java Swing application for encrypting and decrypting files securely.",
+    Link: "https://github.com/anshnegi10/FileEncryptorSwing",
+    Img: "https://images.unsplash.com/photo-1523961131990-5ea7c61b2107?q=80&w=1374&auto=format&fit=crop",
+    TechStack: ["Java", "Swing", "Cryptography"]
+  },
+  {
+    id: 4,
+    Title: "Virtual Gesture Control",
+    Description: "Computer vision based project to control system using hand gestures.",
+    Link: "https://github.com/anshnegi10/virtual-gesture-control",
+    Img: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1470&auto=format&fit=crop",
+    TechStack: ["Python", "OpenCV", "Computer Vision"]
+  },
+  {
+    id: 5,
+    Title: "Anti-money Laundering Algorithm",
+    Description: "Algorithm implementation for detecting money laundering activities.",
+    Link: "https://github.com/anshnegi10/Anti-money-laundering-algorithm",
+    Img: "https://images.unsplash.com/photo-1633158829585-23ba8f7c8caf?q=80&w=1470&auto=format&fit=crop",
+    TechStack: ["Data Analysis", "Algorithms"]
+  },
+  {
+    id: 6,
+    Title: "AWS Cost Optimizer Autoshutdown",
+    Description: "AWS lambda and scripting to automatically shutdown idle resources to optimize cost.",
+    Link: "https://github.com/anshnegi10/AWS_costoptimizer_Autoshutdown",
+    Img: "https://images.unsplash.com/photo-1614064641913-6b11cb97d41f?q=80&w=1374&auto=format&fit=crop",
+    TechStack: ["AWS", "Lambda", "Scripting"]
+  }
+];
+
+export const certificatesData = [
+  { id: 1, Img: "/certificates/aws-ai-practitioner-learning-plan.png" },
+  { id: 2, Img: "/certificates/aws-cloud-practitioner-essentials-1.jpeg" },
+  { id: 3, Img: "/certificates/aws-cloud-practitioner-essentials-2.jpeg" },
+  { id: 4, Img: "/certificates/aws-cloud-quest-cloud-practitioner.png" },
+  { id: 5, Img: "/certificates/bugeater-internship.png" }
+];
+
+export const credlyBadgesData = [
+  { id: 1, title: "AWS Cloud Quest: Cloud Practitioner", href: "https://www.credly.com/badges/760c9acb-7066-410c-b6fd-316dfbf2ce1d/public_url", imageSrc: "https://images.credly.com/size/340x340/images/2784d0d8-327c-4781-9710-1dec330c6823/image.png" },
+  { id: 2, title: "AWS Certified Cloud Practitioner", href: "https://www.credly.com/earner/earned/badge/4b604562-726b-4b09-b6f2-aa6089d86666", imageSrc: "https://images.credly.com/size/340x340/images/0043149d-905e-4903-8d00-47b1c1d0177f/image.png" },
+  { id: 3, title: "AWS Certified Solutions Architect – Associate", href: "https://www.credly.com/earner/earned/badge/10a1f2c9-f340-4e63-816e-46043a6805e9", imageSrc: "https://images.credly.com/size/340x340/images/0e284c3f-5164-4b21-8660-0d84737941bc/image.png" },
+  { id: 4, title: "AWS Certified Developer – Associate", href: "https://www.credly.com/earner/earned/badge/b8b7b9bf-7a76-42e1-b7bb-6e040c846888", imageSrc: "https://images.credly.com/size/340x340/images/b9feab85-1a4a-49c3-b2a4-c0ca9a2d275c/image.png" },
+  { id: 5, title: "AWS Certified SysOps Administrator – Associate", href: "https://www.credly.com/earner/earned/badge/68fb909a-738b-432a-aa17-c34b0f1263d8", imageSrc: "https://images.credly.com/size/340x340/images/33719001-c840-4573-9828-406a469a4731/image.png" }
+];
+
+const skills = [
+  {
+    category: "Cloud & Virtualization",
+    items: [
+      { name: "AWS", icon: Cloud },
+      { name: "Azure", icon: Cloud },
+      { name: "Google Cloud", icon: Globe },
+      { name: "Docker", icon: Boxes },
+      { name: "Virtual Machines", icon: Cpu },
+      { name: "VPN", icon: ShieldCheck },
+      { name: "Storage Virtualization", icon: Server }
+    ]
+  },
+  {
+    category: "Languages",
+    items: [
+      { name: "Python", icon: Code },
+      { name: "Java", icon: Code },
+      { name: "JavaScript", icon: Code },
+      { name: "C", icon: Code }
+    ]
+  },
+  {
+    category: "Web Technologies",
+    items: [
+      { name: "React.js", icon: Layout },
+      { name: "HTML", icon: Code },
+      { name: "CSS", icon: Layout }
+    ]
+  },
+  {
+    category: "Databases",
+    items: [
+      { name: "MySQL", icon: Database },
+      { name: "MongoDB", icon: Database }
+    ]
+  },
+  {
+    category: "Tools & Methodologies",
+    items: [
+      { name: "Git", icon: GitBranch },
+      { name: "GitHub", icon: Terminal },
+      { name: "JIRA", icon: Settings },
+      { name: "DevOps", icon: Settings },
+      { name: "Backend Development", icon: Server }
+    ]
+  }
+];
+
+const TechCard = ({ name, icon: Icon }) => (
+  <div className="group relative flex flex-col items-center justify-center p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-indigo-500/50 transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl hover:shadow-indigo-500/10 overflow-hidden">
+    <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+    <div className="relative z-10 w-16 h-16 flex items-center justify-center rounded-2xl bg-white/5 mb-4 group-hover:scale-110 transition-transform duration-300">
+      <Icon className="w-8 h-8 text-indigo-400 group-hover:text-indigo-300" />
+    </div>
+    <span className="relative z-10 text-base font-medium text-gray-300 group-hover:text-white transition-colors">
+      {name}
+    </span>
+  </div>
+);
+
+export default function FullWidthTabs() {
+  const theme = useTheme();
+  const [value, setValue] = useState(0);
+  const [projects, setProjects] = useState([]);
+  const [certificates, setCertificates] = useState([]);
+  const [showAllProjects, setShowAllProjects] = useState(false);
+  const [showAllCertificates, setShowAllCertificates] = useState(false);
+  const isMobile = window.innerWidth < 768;
+  const initialItems = isMobile ? 4 : 6;
+
+  useEffect(() => {
+    AOS.init({
+      once: false,
+    });
+    
+    // Load local hardcoded data
+    setProjects(projectsData);
+    setCertificates(certificatesData);
+    localStorage.setItem("projects", JSON.stringify(projectsData));
+    localStorage.setItem("certificates", JSON.stringify(certificatesData));
+  }, []);
+
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
+
+  const toggleShowMore = useCallback((type) => {
+    if (type === 'projects') {
+      setShowAllProjects(prev => !prev);
+    } else {
+      setShowAllCertificates(prev => !prev);
+    }
+  }, []);
+
+  const displayedProjects = showAllProjects ? projects : projects.slice(0, initialItems);
+  const displayedCertificates = showAllCertificates ? certificates : certificates.slice(0, initialItems);
+
+  return (
+    <div className="md:px-[10%] px-[5%] w-full sm:mt-0 mt-[3rem] bg-[#030014] overflow-hidden" id="Portfolio">
+      <div className="text-center pb-10" data-aos="fade-up" data-aos-duration="1000">
+        <h2 className="inline-block text-4xl md:text-6xl font-bold text-center mx-auto text-transparent bg-clip-text bg-gradient-to-r from-[#6366f1] to-[#a855f7]">
+          <span style={{
+            color: '#6366f1',
+            backgroundImage: 'linear-gradient(45deg, #6366f1 10%, #a855f7 93%)',
+            WebkitBackgroundClip: 'text',
+            backgroundClip: 'text',
+            WebkitTextFillColor: 'transparent'
+          }}>
+            Portfolio Showcase
+          </span>
+        </h2>
+        <p className="text-slate-400 max-w-2xl mx-auto text-base md:text-lg mt-2">
+          Explore my journey through projects, certifications, and technical expertise. 
+          Each section represents a milestone in my continuous learning path.
+        </p>
+      </div>
+
+      <Box sx={{ width: "100%" }}>
+        <AppBar
+          position="static"
+          elevation={0}
+          sx={{
+            bgcolor: "transparent",
+            border: "1px solid rgba(255, 255, 255, 0.1)",
+            borderRadius: "20px",
+            position: "relative",
+            overflow: "hidden",
+            "&::before": {
+              content: '""',
+              position: "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              background: "linear-gradient(180deg, rgba(139, 92, 246, 0.03) 0%, rgba(59, 130, 246, 0.03) 100%)",
+              backdropFilter: "blur(10px)",
+              zIndex: 0,
+            },
+          }}
+          className="md:px-4"
+        >
+          <Tabs
+            value={value}
+            onChange={handleChange}
+            textColor="secondary"
+            indicatorColor="secondary"
+            variant="fullWidth"
+            sx={{
+              minHeight: "70px",
+              "& .MuiTab-root": {
+                fontSize: { xs: "1rem", md: "1.1rem" },
+                fontWeight: "600",
+                color: "#94a3b8",
+                textTransform: "none",
+                transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
+                padding: "20px 0",
+                zIndex: 1,
+                margin: "8px",
+                borderRadius: "12px",
+                "&:hover": {
+                  color: "#ffffff",
+                  backgroundColor: "rgba(139, 92, 246, 0.1)",
+                  transform: "translateY(-2px)",
+                  "& .lucide": {
+                    transform: "scale(1.1) rotate(5deg)",
+                  },
+                },
+                "&.Mui-selected": {
+                  color: "#fff",
+                  background: "linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(59, 130, 246, 0.2))",
+                  boxShadow: "0 4px 15px -3px rgba(139, 92, 246, 0.2)",
+                  "& .lucide": {
+                    color: "#a78bfa",
+                  },
+                },
+              },
+              "& .MuiTabs-indicator": {
+                height: 0,
+              },
+              "& .MuiTabs-flexContainer": {
+                gap: "8px",
+              },
+            }}
+          >
+            <Tab
+              icon={<Code className="mb-2 w-5 h-5 transition-all duration-300" />}
+              label="Projects"
+              {...a11yProps(0)}
+            />
+            <Tab
+              icon={<Award className="mb-2 w-5 h-5 transition-all duration-300" />}
+              label="Certificates"
+              {...a11yProps(1)}
+            />
+            <Tab
+              icon={<Boxes className="mb-2 w-5 h-5 transition-all duration-300" />}
+              label="Tech Stack"
+              {...a11yProps(2)}
+            />
+          </Tabs>
+        </AppBar>
+
+        <SwipeableViews
+          axis={theme.direction === "rtl" ? "x-reverse" : "x"}
+          index={value}
+          onChangeIndex={setValue}
+        >
+          {/* Projects Tab */}
+          <TabPanel value={value} index={0} dir={theme.direction}>
+            <div className="container mx-auto flex justify-center items-center overflow-hidden">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 2xl:grid-cols-3 gap-5">
+                {displayedProjects.map((project, index) => (
+                  <div
+                    key={project.id || index}
+                    data-aos={index % 3 === 0 ? "fade-up-right" : index % 3 === 1 ? "fade-up" : "fade-up-left"}
+                    data-aos-duration={index % 3 === 0 ? "1000" : index % 3 === 1 ? "1200" : "1000"}
+                  >
+                    <CardProject
+                      Img={project.Img}
+                      Title={project.Title}
+                      Description={project.Description}
+                      Link={project.Link}
+                      id={project.id}
+                      TechStack={project.TechStack}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+            {projects.length > initialItems && (
+              <div className="mt-6 w-full flex justify-start">
+                <ToggleButton
+                  onClick={() => toggleShowMore('projects')}
+                  isShowingMore={showAllProjects}
+                />
+              </div>
+            )}
+          </TabPanel>
+
+          {/* Certificates Tab */}
+          <TabPanel value={value} index={1} dir={theme.direction}>
+            <div className="container mx-auto pb-10">
+              <h3 className="text-3xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-[#6366f1] to-[#a855f7]">Credly Badges</h3>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-12">
+                {credlyBadgesData.map((badge, index) => (
+                  <div
+                    key={badge.id}
+                    data-aos="fade-up"
+                    data-aos-delay={index * 100}
+                  >
+                    <CredlyBadge 
+                      title={badge.title} 
+                      href={badge.href} 
+                      imageSrc={badge.imageSrc} 
+                    />
+                  </div>
+                ))}
+              </div>
+
+              <h3 className="text-3xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-[#6366f1] to-[#a855f7]">Certificates</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 md:gap-5 gap-4">
+                {displayedCertificates.map((certificate, index) => (
+                  <div
+                    key={certificate.id || index}
+                    data-aos={index % 3 === 0 ? "fade-up-right" : index % 3 === 1 ? "fade-up" : "fade-up-left"}
+                    data-aos-duration={index % 3 === 0 ? "1000" : index % 3 === 1 ? "1200" : "1000"}
+                  >
+                    <Certificate ImgSertif={certificate.Img} />
+                  </div>
+                ))}
+              </div>
+              {certificates.length > initialItems && (
+                <div className="mt-6 w-full flex justify-start">
+                  <ToggleButton
+                    onClick={() => toggleShowMore('certificates')}
+                    isShowingMore={showAllCertificates}
+                  />
+                </div>
+              )}
+            </div>
+          </TabPanel>
+
+          {/* Tech Stack Tab */}
+          <TabPanel value={value} index={2} dir={theme.direction}>
+            <div className="container mx-auto flex flex-col gap-8 pb-[5%]">
+              {skills.map((skillGroup, index) => (
+                <div 
+                  key={index} 
+                  className="bg-white/5 border border-white/10 p-6 rounded-2xl"
+                  data-aos="fade-up"
+                  data-aos-delay={index * 100}
+                >
+                  <h4 className="text-2xl font-semibold mb-4 text-white">
+                    {skillGroup.category}
+                  </h4>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                    {skillGroup.items.map((skill, skillIndex) => (
+                      <TechCard key={skillIndex} name={skill.name} icon={skill.icon} />
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </TabPanel>
+        </SwipeableViews>
+      </Box>
+    </div>
+  );
+}
