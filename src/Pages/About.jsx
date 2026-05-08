@@ -2,7 +2,7 @@ import React, { useEffect, memo, useMemo } from "react"
 import { FileText, Code, Award, Globe, ArrowUpRight, Sparkles, UserCheck } from "lucide-react"
 import AOS from 'aos'
 import 'aos/dist/aos.css'
-import { projectsData, certificatesData, credlyBadgesData } from "./Portfolio"
+import { projectsData, certificatesData, credlyBadgesData } from "../data/portfolioData"
 
 // Memoized Components
 const Header = memo(() => (
