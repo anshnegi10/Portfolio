@@ -341,6 +341,7 @@ export default function FullWidthTabs() {
                       Title={project.Title}
                       Description={project.Description}
                       Link={project.Link}
+                      Github={project.Github}
                       id={project.id}
                       TechStack={project.TechStack}
                     />

@@ -46,6 +46,22 @@ export const projectsData = [
     Link: "https://github.com/anshnegi10/AWS_costoptimizer_Autoshutdown",
     Img: "https://images.unsplash.com/photo-1614064641913-6b11cb97d41f?q=80&w=1374&auto=format&fit=crop",
     TechStack: ["AWS", "Lambda", "Scripting"]
+  },
+  {
+    id: 7,
+    Title: "MERN Estate Hub",
+    Description: "A full-stack student housing discovery platform for UPES students, featuring verified listings, owner dashboards, and interactive maps.",
+    Link: "https://mern-estate-hub-six.vercel.app/explore",
+    Github: "https://github.com/anshnegi10/MERN-Estate-Hub",
+    Img: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?q=80&w=1473&auto=format&fit=crop",
+    TechStack: ["Next.js", "MongoDB", "Tailwind CSS", "Leaflet"],
+    Features: [
+      "Secure JWT Authentication & HTTP-only cookies",
+      "Interactive Map-based search using Leaflet",
+      "Dedicated Owner Dashboard for property management",
+      "Real-time MongoDB Atlas integration",
+      "Responsive design with Tailwind CSS"
+    ]
   }
 ];
 

@@ -1,9 +1,9 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { ExternalLink, ArrowRight } from "lucide-react";
+import { ExternalLink, ArrowRight, Github } from "lucide-react";
 import { toSlug } from "../utils/slug";
 
-const CardProject = ({ Img, Title, Description, Link: ProjectLink, id, TechStack }) => {
+const CardProject = ({ Img, Title, Description, Link: ProjectLink, Github: GithubLink, id, TechStack }) => {
   const handleLiveDemo = (e) => {
     if (!ProjectLink) {
       console.log("ProjectLink kosong");
@@ -54,22 +54,39 @@ const CardProject = ({ Img, Title, Description, Link: ProjectLink, id, TechStack
             )}
 
             <div className="pt-4 flex items-center justify-between">
-              {ProjectLink ? (
-                <a
-                  href={ProjectLink || "#"}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={handleLiveDemo}
-                  className="inline-flex items-center space-x-2 text-[#a855f7] hover:text-[#a855f7]/80 transition-colors duration-200"
-                >
-                  <span className="text-base font-medium">GitHub / Demo</span>
-                  <ExternalLink className="w-4 h-4" />
-                </a>
-              ) : (
-                <span className="text-gray-500 text-sm">
-                  Demo Not Available
-                </span>
-              )}
+              <div className="flex items-center space-x-4">
+                {ProjectLink && (
+                  <a
+                    href={ProjectLink || "#"}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={handleLiveDemo}
+                    className="inline-flex items-center space-x-2 text-[#a855f7] hover:text-[#a855f7]/80 transition-colors duration-200"
+                  >
+                    <span className="text-base font-medium">
+                      {GithubLink ? "Demo" : "GitHub / Demo"}
+                    </span>
+                    <ExternalLink className="w-4 h-4" />
+                  </a>
+                )}
+                
+                {GithubLink && (
+                  <a
+                    href={GithubLink || "#"}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center space-x-2 text-gray-400 hover:text-white transition-colors duration-200"
+                  >
+                    <Github className="w-4 h-4" />
+                  </a>
+                )}
+
+                {!ProjectLink && !GithubLink && (
+                  <span className="text-gray-500 text-sm">
+                    Links Not Available
+                  </span>
+                )}
+              </div>
 
               {id ? (
                 <Link
